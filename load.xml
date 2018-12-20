@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<project name="myproject" basedir="." default="main">
+	<path id="lib_classpath">
+		<fileset dir="${basedir}">
+			<include name="test1.jar"/>
+		</fileset>
+	</path>
+	<target name="main">
+		<java classname="com.test.distribute.Distribute" classpathref="lib_classpath">
+		<arg value="123"/>
+		<arg value="456"/>
+		<arg value="oe"/>
+		</java>
+	</target>
+</project>

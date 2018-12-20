@@ -1,0 +1,168 @@
+<?xml version="1.0" ?>
+<project name="attribute" default="show1" basedir="">
+	<property name="who" value="sherro"/>
+	<target name="show1">
+		<echo>Property</echo>
+		<echo message="Property2"/>
+		<echo message="Hello ${who}"/>
+	</target>
+	
+	<target name="showSystem">
+		<echo message="Current OS is ${os.name}"/>
+	</target>
+	
+	<target name="showbasedir">
+		<!--显示基路径-->
+		<echo message="Base URI is ${basedir}"/>
+	</target>
+	
+	<property file="./build.properties"/>
+	<target name="first_read">	
+		<echo message="value is: ${output.dir}"/>
+	</target>
+	
+	<target name="read_location">
+		<property name="outputdir3" location="out3"/>
+		<echo message="location is: ${outputdir3}"/>
+	</target>
+	
+	<target name="init" description="init make dir">
+		<mkdir dir="build/class"/>
+		<mkdir dir="dist"/>
+		<echo message="make two file directionary successfully"/>
+	</target>
+	
+	<target name="deletedir" depends="init" description="delete two dir">
+		<delete dir="build"/>
+		<delete dir="dist"/>
+		<echo message="delete two file directionary successfully"/>
+	</target>
+	
+	<target name="compile" depends="init" description="compile java file">
+		<javac srcdir="src" destdir="build/class" includeantruntime="on"/>
+		<echo message="compile successfully"/>
+	</target>
+	
+	<target name="compilejavadoc" depends="init" description="compile javadoc file">
+		<javadoc sourcepath="src" destdir="build/class" packagenames="com.ant.*"/>
+		<echo>compile java doc complete</echo>
+	</target>
+	
+	<target name="deploy" depends="compile,compilejavadoc">
+		<jar basedir="build/class" destfile="dist/project.jar"/>
+		<echo message="deploy jar file successfully"/>
+	</target>
+	
+	<fileset dir="src" includes="**/*.java" id="source.fileset"/>
+	<target name="copy_fileset">
+		<copy todir="backup">
+			<fileset refid="source.fileset"/>
+		</copy>
+		<echo>Copy fileset successfully</echo>
+	</target>
+	
+	<target name="deletefile">
+		<delete file="myfile.txt"/>
+		<echo message="delete file successfully"/>
+	</target>
+	
+	<target name="touchfile">
+		<touch file="myfile.txt"/>
+		<echo>touch file successfully</echo>
+	</target>
+	
+	<target name="writeintofile" description="write context into file">
+		<echo file="myfile.txt">sherro is a good man</echo>
+		<echo file="myfile.txt" message="${line.separator}" append="true"/>
+		<echo file="myfile.txt" append="true">sherro is a nice man</echo>
+	</target>
+	
+	<target name="echodemo" description="simple demo">
+		<echo message="Hello, world"/>
+		<echo message="Embed a line break:${line.separator}"/>
+		<echo>Embed another:${line.separator}</echo>
+		<echo>This is a longer message stretching over
+two lines.
+		</echo>
+	</target>
+	
+	<target name="echodemo2" description="echo in different modes: includings debug,quiet modes">
+		<echo level="error">Error</echo>
+		<echo>Default</echo>
+		<echo level="warning">Warning</echo>
+		<echo level="info">Info</echo>
+		<echo level="verbose">Verbose</echo>
+		<echo level="debug">Debug Deleting driver C:</echo>
+	</target>
+	
+	<!--过滤映射-->
+	<target name="filter">
+		<tstamp/>	
+		<copy todir="new_web" overwrite="true">
+			<fileset dir="web"/>
+			<filterset>
+				<filter token="DATE" value="${DSTAMP}"/>
+				<filter token="TIME" value="${TSTAMP}"/>
+				<filter token="WHO" value="${who}"/>
+			</filterset>
+		</copy>
+		<echo message="filter mapping complete"/>
+	</target>
+	
+	<target name="delete_new_web" description="delete created new web">
+		<delete dir="new_web"/>
+		<echo>Delete new_web successfully</echo>
+	</target>
+	
+	<!--扁平映射-->
+	<target name="flat">
+		<tstamp/>
+		<copy todir="new_web2" overwrite="true">
+			<fileset dir="web"/>
+			<filterset>
+				<filter token="DATE" value="${DSTAMP}"/>
+				<filter token="TIME" value="${TSTAMP}"/>
+				<filter token="WHO" value="${who}"/>
+			</filterset>
+			<mapper type="flatten"/>
+		</copy>
+	</target>
+	
+	<target name="delete_new_web2" description="delete created new_web2">
+		<delete dir="new_web2"/>
+		<echo message="Delete new_web2 successfully"/>
+	</target>
+	
+	<!--全局映射-->
+	<target name="global">
+		<tstamp/>
+		<copy todir="srcbak">
+			<fileset dir="src"/>
+			<mapper type="glob" from="*.java" to="*.java.bak"/>
+		</copy>
+	</target>
+	
+	<target name="delete_srcbak" description="delete created srcbak">
+		<delete dir="srcbak"/>
+		<echo>Delete create srcbak successfully</echo>
+	</target>
+	
+	<!--包映射-->
+	<target name="package">
+		<copy todir="srcbak">
+			<fileset dir="src" includes="**/*.java"/>
+			<mapper type="package" from="*.java" to="TEST-*TEST.html"/>
+		</copy>
+	</target>
+	
+	<!--解包映射-->
+	<target name="unpackage">
+		<copy todir="srcbak">
+			<fileset dir="srcbak" includes="**/*.html"/>
+			<mapper type="unpackage" from="TEST-*TEST.html" to="*.java"/>
+		</copy>
+	</target>
+	
+	
+	
+</project>
